@@ -156,8 +156,9 @@ Note_Frequencies = np.array([["C0",16.35],
                              ["A8s",7458.62],
                              ["B8f",7458.62],
                              ["B8",7902.13]])
-print(Note_Frequencies.shape)
 np.save('Note_Frequencies.npy',Note_Frequencies)
 
+#NOTE: WHEN LOADING THE DATA, ALL TYPE WILL BE STRING, NEED TO TYPECAST THE FREQUENCIES BACK TO FLOATS 
 #data = np.load('Note_Frequencies.npy')
+
 
