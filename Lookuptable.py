@@ -1,6 +1,8 @@
 import numpy as np
 
 #Wow I chose a bad way to do this
+#Theres formulas for this
+#RIP
 Note_Frequencies = np.array([[C0,16.35],
                              [C0s,17.32],
                              [D0f,17.32],
