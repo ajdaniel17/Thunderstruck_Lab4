@@ -2,8 +2,7 @@
 from time import sleep
 import threading
 import numpy as np
-
-from Lookuptable import Note_Frequencies
+import time
 
 # GPIO.setmode(GPIO.BCM)
 # GPIO.setwarnings(False)
@@ -11,17 +10,52 @@ from Lookuptable import Note_Frequencies
 class Music_Driver (threading.Thread):
     port = 0
     BPM = 120
-    EigenFrq = 141000
+    EigenDuration = 1.0/141000.0
     def __init__(self,port):
         threading.Thread.__init__(self)
         self.port = port
         #NOTE: ALL VALUES IN ARRAY ARE ALL STRINGS, TYPE CONVERT WHEN NEEDED
         self.Note_Frequencies = np.load('Note_Frequencies.npy')
+        self.row ,self.col = self.Note_Frequencies.shape
         # GPIO.setup(self.port,GPIO.OUT)
         # GPIO.output(self.port,GPIO.LOW)
 
     def playNote(self,Note,timing):
-        print("wowie")
+        Duration = self.getDuration(timing)
+        for i in range(self.row):
+            if self.Note_Frequencies[i][0] == Note:
+                FRQ = self.Note_Frequencies[i][1]
+                break
+        NoteCycleDuration = 1.0 / FRQ
+        NoteStart = time.time()
+        NoteCycle = True
+        EigenCycle = True
+        
+        while ((time.time() - NoteStart) < Duration):
+            NoteCycletime = time.time()
+            while ((time.time() - NoteCycletime) < NoteCycleDuration):
+                if(NoteCycle):
+                    print("HIGH")
+                    # EigenStart = time.time()
+                    # while((time.time() - EigenStart) < self.EigenDuration):
+                    #     if(EigenCycle):
+                    #         # GPIO.output(self.port,GPIO.HIGH)
+                    #         print("HIGH")
+                    #     else:
+                    #         # GPIO.output(self.port,GPIO.LOW)
+                    #         print("LOW")
+                    # EigenCycle = not EigenCycle
+                else:
+                    print("LOW")
+                    # GPIO.output(self.port,GPIO.LOW)
+            NoteCycle = not NoteCycle
+
+
+
+
+
+
+
 
     def getDuration(self,timing):
         if(timing == 1): #Half Note
@@ -58,9 +92,10 @@ class Music_Driver (threading.Thread):
     def getFRQ(self):
         return self.EigenFrq
 
-    
+
 
 Test = Music_Driver(2)
+Test.playNote("C1",1)
 
 
 
