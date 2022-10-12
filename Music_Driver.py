@@ -1,11 +1,11 @@
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 from time import sleep
 import threading
 import numpy as np
 import time
 
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 class Music_Driver (threading.Thread):
     port = 0
@@ -17,8 +17,8 @@ class Music_Driver (threading.Thread):
         #NOTE: ALL VALUES IN ARRAY ARE ALL STRINGS, TYPE CONVERT WHEN NEEDED
         self.Note_Frequencies = np.load('Note_Frequencies.npy')
         self.row ,self.col = self.Note_Frequencies.shape
-        # GPIO.setup(self.port,GPIO.OUT)
-        # GPIO.output(self.port,GPIO.LOW)
+        GPIO.setup(self.port,GPIO.OUT)
+        GPIO.output(self.port,GPIO.LOW)
 
     def playNote(self,Note,timing):
         Duration = self.getDuration(timing)
@@ -26,7 +26,7 @@ class Music_Driver (threading.Thread):
             if self.Note_Frequencies[i][0] == Note:
                 FRQ = self.Note_Frequencies[i][1]
                 break
-        NoteCycleDuration = 1.0 / FRQ
+        NoteCycleDuration = 1.0 / float(FRQ)
         NoteStart = time.time()
         NoteCycle = True
         EigenCycle = True
@@ -35,26 +35,21 @@ class Music_Driver (threading.Thread):
             NoteCycletime = time.time()
             while ((time.time() - NoteCycletime) < NoteCycleDuration):
                 if(NoteCycle):
-                    print("HIGH")
+                    GPIO.output(self.port,GPIO.HIGH)
                     # EigenStart = time.time()
                     # while((time.time() - EigenStart) < self.EigenDuration):
                     #     if(EigenCycle):
-                    #         # GPIO.output(self.port,GPIO.HIGH)
-                    #         print("HIGH")
+                    #         GPIO.output(self.port,GPIO.HIGH)
+                            
                     #     else:
-                    #         # GPIO.output(self.port,GPIO.LOW)
-                    #         print("LOW")
+                    #         GPIO.output(self.port,GPIO.LOW)
+                            
                     # EigenCycle = not EigenCycle
                 else:
-                    print("LOW")
-                    # GPIO.output(self.port,GPIO.LOW)
+                    
+                    GPIO.output(self.port,GPIO.LOW)
             NoteCycle = not NoteCycle
-
-
-
-
-
-
+        GPIO.output(self.port,GPIO.LOW)
 
 
     def getDuration(self,timing):
@@ -95,7 +90,9 @@ class Music_Driver (threading.Thread):
 
 
 Test = Music_Driver(2)
-Test.playNote("C1",1)
+while True:
+    Test.playNote("C1",1)
+    sleep(.5)
 
 
 
