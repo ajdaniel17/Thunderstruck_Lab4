@@ -1,24 +1,25 @@
-import RPi.GPIO as GPIO
+from rpi_hardware_pwm import HardwarePWM
 from time import sleep
 import threading
 import numpy as np
 import time
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
 
 class Music_Driver (threading.Thread):
     port = 0
     BPM = 120
     EigenDuration = 1.0/141000.0
+    SampleRate = 10
+    #NOTE: for port, 0 is GPIO 18, 1 is GPIO 19. Also, they cant have different FRQ
     def __init__(self,port):
         threading.Thread.__init__(self)
         self.port = port
         #NOTE: ALL VALUES IN ARRAY ARE ALL STRINGS, TYPE CONVERT WHEN NEEDED
         self.Note_Frequencies = np.load('Note_Frequencies.npy')
         self.row ,self.col = self.Note_Frequencies.shape
-        GPIO.setup(self.port,GPIO.OUT)
-        GPIO.output(self.port,GPIO.LOW)
+        self.pwm = HardwarePWM(pwm_channel=0, hz=100)
+        self.pwm.start(10)
+
 
     def playNote(self,Note,timing):
         Duration = self.getDuration(timing)
@@ -26,31 +27,18 @@ class Music_Driver (threading.Thread):
             if self.Note_Frequencies[i][0] == Note:
                 FRQ = self.Note_Frequencies[i][1]
                 break
-        NoteCycleDuration = 1.0 / float(FRQ)
-        NoteStart = time.time()
-        NoteCycle = True
-        EigenCycle = True
-        
-        while ((time.time() - NoteStart) < Duration):
-            NoteCycletime = time.time()
-            while ((time.time() - NoteCycletime) < NoteCycleDuration):
-                if(NoteCycle):
-                    GPIO.output(self.port,GPIO.HIGH)
-                    # EigenStart = time.time()
-                    # while((time.time() - EigenStart) < self.EigenDuration):
-                    #     if(EigenCycle):
-                    #         GPIO.output(self.port,GPIO.HIGH)
-                            
-                    #     else:
-                    #         GPIO.output(self.port,GPIO.LOW)
-                            
-                    # EigenCycle = not EigenCycle
-                else:
-                    
-                    GPIO.output(self.port,GPIO.LOW)
-            NoteCycle = not NoteCycle
-        GPIO.output(self.port,GPIO.LOW)
+        self.pwm.change_frequency(float(FRQ))
+        self.pwm.change_duty_cycle(10)        
+        sleep(Duration)
+        self.pwm.change_duty_cycle(0) 
 
+
+    def playFRQ(self,FRQ):
+        Duration  = 1.0 / self.SampleRate
+        self.pwm.change_frequency(FRQ)
+        self.pwm.change_duty_cycle(10)        
+        sleep(Duration)
+        self.pwm.change_duty_cycle(0)    
 
     def getDuration(self,timing):
         if(timing == 1): #Half Note
@@ -87,11 +75,17 @@ class Music_Driver (threading.Thread):
     def getFRQ(self):
         return self.EigenFrq
 
+    def setSample(self,s):
+        self.SampleRate = s
+
+    def getSample(self):
+        return self.SampleRate
 
 
 Test = Music_Driver(2)
 while True:
     Test.playNote("C1",1)
+    # Test.playNote(500)
     sleep(.5)
 
 
