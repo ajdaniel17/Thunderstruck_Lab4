@@ -11,8 +11,8 @@ class FFT_Driver(threading.Thread):
     def FFT(self,samplerate,data):
         self.State = True
         length = data.shape[0] / samplerate
-        print(f"number of channels = {data.shape}")
-        print(f"length = {length}s")
+        # print(f"number of channels = {data.shape}")
+        # print(f"length = {length}s")
         FFT = np.fft.fft(data)/len(data)
         FFT = FFT[range(int(len(data)/2))]
         tpCount = len(data)
@@ -24,6 +24,7 @@ class FFT_Driver(threading.Thread):
             if abs(FFT[i]) > high:
                 high = frequencies[i]
         self.State = False
+        print(high)
         return high
     
     def getState(self):

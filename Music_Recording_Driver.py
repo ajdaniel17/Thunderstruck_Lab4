@@ -6,9 +6,9 @@ import threading
 class Music_Recording_Driver(threading.Thread):
     CHUNK = 1024
     FORMAT = pyaudio.paInt16
-    CHANNELS = 2
+    CHANNELS = 1
     RATE = 44100
-    RECORD_SECONDS = 0.1
+    RECORD_SECONDS = 0.2
     WAVE_OUTPUT_FILENAME = "output.wav"
     Recording = False
     def __init__(self):
@@ -49,9 +49,9 @@ class Music_Recording_Driver(threading.Thread):
     def getState(self):
         return self.Recording
 
-Test = Music_Recording_Driver()
-Test.getAudioIndex()
-Test.setStream(5)
-Test.Record()
+# Test = Music_Recording_Driver()
+# Test.getAudioIndex()
+# Test.setStream(5)
+# Test.Record()
 
     

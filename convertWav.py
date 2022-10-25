@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.io
 
 start = time.time()
-samplerate , data = read("1.wav")
+samplerate , data = read("output.wav")
 print(f"number of channels = {data.shape}")
 length = data.shape[0] / samplerate
 print(f"length = {length}s")
