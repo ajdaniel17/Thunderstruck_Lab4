@@ -82,11 +82,11 @@ class Music_Driver (threading.Thread):
         return self.SampleRate
 
 
-Test = Music_Driver(2)
-while True:
-    Test.playNote("C1",1)
-    # Test.playNote(500)
-    sleep(.5)
+# Test = Music_Driver(2)
+# while True:
+#     Test.playNote("C1",1)
+#     # Test.playNote(500)
+#     sleep(.5)
 
 
 
