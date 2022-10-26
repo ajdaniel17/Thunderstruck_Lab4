@@ -1,18 +1,18 @@
 import pyaudio
 import wave
-import threading
+# import threading
 
 
-class Music_Recording_Driver(threading.Thread):
+class Music_Recording_Driver():
     CHUNK = 1024
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
-    RECORD_SECONDS = 0.2
+    RECORD_SECONDS = 0.1
     WAVE_OUTPUT_FILENAME = "output.wav"
     Recording = False
     def __init__(self):
-        threading.Thread.__init__(self)
+        # threading.Thread.__init__(self)
         self.p = pyaudio.PyAudio()
 
     def getAudioIndex(self):

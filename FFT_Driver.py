@@ -1,12 +1,13 @@
-import threading
+# import threading
 import numpy as np
 import time
 from scipy.io.wavfile import read
 
-class FFT_Driver(threading.Thread):
+class FFT_Driver():
     State = False
     def __init__(self):
-        threading.Thread.__init__(self)
+        print("bingus")
+        # threading.Thread.__init__(self)
 
     def FFT(self,samplerate,data):
         self.State = True
@@ -21,10 +22,13 @@ class FFT_Driver(threading.Thread):
         frequencies = values/timePeriod
         high = 0
         for i in range(len(FFT)):
-            if abs(FFT[i]) > high:
+            if abs(FFT[i]) > high: #and frequencies[i] > 600:
                 high = frequencies[i]
+                PowerHigh = abs(FFT[i])
         self.State = False
-        print(high)
+        print(high , PowerHigh)
+        if PowerHigh < 400:
+            high = 0
         return high
     
     def getState(self):

@@ -25,7 +25,7 @@ class Music_Driver (threading.Thread):
         Duration = self.getDuration(timing)
         for i in range(self.row):
             if self.Note_Frequencies[i][0] == Note:
-                FRQ = self.Note_Frequencies[i][1]
+                FRQ = self.Note_Frequencies[i][2]
                 break
         self.pwm.change_frequency(float(FRQ))
         self.pwm.change_duty_cycle(10)        
@@ -38,6 +38,12 @@ class Music_Driver (threading.Thread):
         self.pwm.change_frequency(FRQ)
         self.pwm.change_duty_cycle(10)        
         sleep(Duration)
+        self.pwm.change_duty_cycle(0)    
+
+    def playFRQTime(self,FRQ,Time):
+        self.pwm.change_frequency(FRQ)
+        self.pwm.change_duty_cycle(10)        
+        sleep(Time)
         self.pwm.change_duty_cycle(0)    
 
     def getDuration(self,timing):
