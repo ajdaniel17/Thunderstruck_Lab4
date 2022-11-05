@@ -1,20 +1,27 @@
+import Music_Driver as MD
 from mido import MidiFile
 import numpy as np
-import time
-import pysine as py
-import threading
+from time import sleep
+import atexit
 
-midi_file = MidiFile("MIDI/Tetris.mid",clip = True)
-# for track in midi_file.tracks:
-#     print(track)
+
+
+Coil = MD.Music_Driver()
+def kill_sounds():
+    Coil.kill()
+atexit.register(kill_sounds)
+midi_file = MidiFile("MIDI/Married_Life.mid",clip = True)
+
 Note_Frequencies = np.load('Note_Frequencies.npy')
 row ,col = Note_Frequencies.shape
+FRQ = 500
+
 
 for msg in midi_file:
     print(msg) 
     if msg.type == 'note_off':
         # print("playing note", FRQ , "for", msg.time)
-        py.sine(FRQ,msg.time)
+        Coil.playMidiNote(FRQ,msg.time)
         
     elif msg.type == 'note_on':
         for i in range(row):
@@ -22,8 +29,5 @@ for msg in midi_file:
             if msg.note == int(Note_Frequencies[i][1]):
                 FRQ = float(Note_Frequencies[i][2])
                 break
-        py.sine(0,msg.time)
+        sleep(msg.time)
     
-        
-    
-        

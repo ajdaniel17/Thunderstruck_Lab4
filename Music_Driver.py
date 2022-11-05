@@ -6,14 +6,13 @@ import time
 
 
 class Music_Driver (threading.Thread):
-    port = 0
+
     BPM = 120
-    EigenDuration = 1.0/141000.0
     SampleRate = 10
     #NOTE: for port, 0 is GPIO 18, 1 is GPIO 19. Also, they cant have different FRQ
-    def __init__(self,port):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.port = port
+   
         #NOTE: ALL VALUES IN ARRAY ARE ALL STRINGS, TYPE CONVERT WHEN NEEDED
         self.Note_Frequencies = np.load('Note_Frequencies.npy')
         self.row ,self.col = self.Note_Frequencies.shape
@@ -32,7 +31,6 @@ class Music_Driver (threading.Thread):
         sleep(Duration)
         self.pwm.change_duty_cycle(0) 
 
-
     def playFRQ(self,FRQ):
         Duration  = 1.0 / self.SampleRate
         self.pwm.change_frequency(FRQ)
@@ -40,11 +38,11 @@ class Music_Driver (threading.Thread):
         sleep(Duration)
         self.pwm.change_duty_cycle(0)    
 
-    def playFRQTime(self,FRQ,Time):
-        self.pwm.change_frequency(FRQ)
+    def playMidiNote(self,FRQ,Duration):
+        self.pwm.change_frequency(float(FRQ))
         self.pwm.change_duty_cycle(10)        
-        sleep(Time)
-        self.pwm.change_duty_cycle(0)    
+        sleep(Duration)
+        self.pwm.change_duty_cycle(0)  
 
     def getDuration(self,timing):
         if(timing == 1): #Half Note
@@ -68,6 +66,8 @@ class Music_Driver (threading.Thread):
         elif(timing == 10): #Triplet-sixteenth Note
             return 10.0/self.BPM
 
+    def kill(self):
+        self.pwm.change_duty_cycle(0)
 
     def setBPM(self,BPM):
         self.BPM = BPM
@@ -88,10 +88,10 @@ class Music_Driver (threading.Thread):
         return self.SampleRate
 
 
-# Test = Music_Driver(2)
+# Test = Music_Driver()
 # while True:
-#     Test.playNote("C1",1)
-#     # Test.playNote(500)
+#     # Test.playNote("C1",1)
+#     Test.playFRQ(500)
 #     sleep(.5)
 
 
